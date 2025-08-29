@@ -1,14 +1,23 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Calendar, Users, Settings, FileText, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet.jsx'
-import DoctorManagement from './components/DoctorManagement.jsx'
-import DutyCalendar from './components/DutyCalendar.jsx'
-import DutySettings from './components/DutySettings.jsx'
-import ExportPage from './components/ExportPage.jsx'
 import './App.css'
+
+// Lazy load bileşenler
+const DoctorManagement = lazy(() => import('./components/DoctorManagement.jsx'))
+const DutyCalendar = lazy(() => import('./components/DutyCalendar.jsx'))
+const DutySettings = lazy(() => import('./components/DutySettings.jsx'))
+const ExportPage = lazy(() => import('./components/ExportPage.jsx'))
+
+// Loading bileşeni
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center h-64">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+)
 
 function App() {
   const [currentPage, setCurrentPage] = useState('calendar')
@@ -37,15 +46,35 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'calendar':
-        return <DutyCalendar />
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DutyCalendar />
+          </Suspense>
+        )
       case 'doctors':
-        return <DoctorManagement />
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DoctorManagement />
+          </Suspense>
+        )
       case 'settings':
-        return <DutySettings />
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DutySettings />
+          </Suspense>
+        )
       case 'export':
-        return <ExportPage />
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ExportPage />
+          </Suspense>
+        )
       default:
-        return <DutyCalendar />
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DutyCalendar />
+          </Suspense>
+        )
     }
   }
 
